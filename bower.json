@@ -1,0 +1,31 @@
+{
+  "name": "angular-rich-text-diff",
+  "main": "angular-rich-text-diff.js",
+  "version": "0.0.1",
+  "authors": [
+    "Bill Long <bill@blackout.us>"
+  ],
+  "description": "Uses google-diff-match-patch to diff two html strings without messing up the html",
+  "keywords": [
+    "angular",
+    "rich",
+    "text",
+    "html",
+    "diff"
+  ],
+  "license": "MIT",
+  "homepage": "http://github.com/bill-long/angular-rich-text-diff",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "dt-angular": "~1.2.16"
+  },
+  "dependencies": {
+    "google-diff-match-patch": "~0.1.0"
+  }
+}

@@ -1,0 +1,9 @@
+﻿ins, ins > * {
+	color: black;
+	background: #bbffbb !important;
+}
+
+del, del > * {
+	color: black;
+	background: #ffbbbb !important;
+}
