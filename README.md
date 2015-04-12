@@ -23,6 +23,12 @@ to include the google-diff-match-patch.js file in your project.
 
 ## Usage
 
+Install from bower:
+
+```
+bower install angular-rich-text-diff
+```
+
 To use the directive, add it to your app's dependencies:
 
 ```
