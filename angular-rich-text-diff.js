@@ -27,19 +27,52 @@ var AngularRichTextDiff;
             this.dmp.diff_cleanupSemantic(diffs);
             var diffOutput = '';
             for (var x = 0; x < diffs.length; x++) {
-                var outputString = this.convertDiffableBackToHtml(diffs[x][1]);
-                if (diffs[x][0] === 1) {
-                    // This is an add
-                    diffOutput += '<ins>' + outputString + '</ins>';
-                } else if (diffs[x][0] === -1) {
-                    // This is a delete
-                    diffOutput += '<del>' + outputString + '</del>';
-                } else {
-                    diffOutput += outputString;
-                }
+                diffs[x][1] = this.insertTagsForOperation(diffs[x][1], diffs[x][0]);
+                diffOutput += this.convertDiffableBackToHtml(diffs[x][1]);
             }
 
             this.$scope.diffOutput = this.$sce.trustAsHtml(diffOutput);
+        };
+
+        RichTextDiffController.prototype.insertTagsForOperation = function (diffableString, operation) {
+            var openTag = '';
+            var closeTag = '';
+            if (operation === 1) {
+                openTag = '<ins>';
+                closeTag = '</ins>';
+            } else if (operation === -1) {
+                openTag = '<del>';
+                closeTag = '</del>';
+            } else {
+                return diffableString;
+            }
+
+            var outputString = openTag;
+            var isOpen = true;
+            for (var x = 0; x < diffableString.length; x++) {
+                if (diffableString.charCodeAt(x) < this.unicodeRangeStart) {
+                    // We just hit a regular character. If tag is not open, open it.
+                    if (!isOpen) {
+                        outputString += openTag;
+                        isOpen = true;
+                    }
+
+                    outputString += diffableString[x];
+                } else {
+                    // We just hit one of our mapped unicode characters. Close our tag.
+                    if (isOpen) {
+                        outputString += closeTag;
+                        isOpen = false;
+                    }
+
+                    outputString += diffableString[x];
+                }
+            }
+
+            if (isOpen)
+                outputString += closeTag;
+
+            return outputString;
         };
 
         RichTextDiffController.prototype.convertHtmlToDiffableString = function (htmlString) {
