@@ -6,9 +6,16 @@ var AngularRichTextDiff;
 
     var RichTextDiffController = (function () {
         function RichTextDiffController($scope, $sce) {
+            var _this = this;
             this.$scope = $scope;
             this.$sce = $sce;
             this.unicodeRangeStart = 0xE000;
+            $scope.$watch('left', function () {
+                _this.doDiff();
+            });
+            $scope.$watch('right', function () {
+                _this.doDiff();
+            });
             this.tagMap = [];
             this.dmp = new diff_match_patch();
             this.doDiff();

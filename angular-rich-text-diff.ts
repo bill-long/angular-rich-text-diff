@@ -24,6 +24,8 @@ module AngularRichTextDiff {
         dmp: diff_match_patch;
 
         constructor(public $scope: IRichTextDiffScope, public $sce: ng.ISCEService) {
+            $scope.$watch('left', () => { this.doDiff(); });
+            $scope.$watch('right', () => { this.doDiff(); });
             this.tagMap = [];
             this.dmp = new diff_match_patch();
             this.doDiff();
