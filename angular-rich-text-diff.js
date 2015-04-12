@@ -18,21 +18,21 @@ var AngularRichTextDiff;
             var diffableRight = this.convertHtmlToDiffableString(this.$scope.right);
             var diffs = this.dmp.diff_main(diffableLeft, diffableRight);
             this.dmp.diff_cleanupSemantic(diffs);
-            this.$scope.diffOutput = '';
+            var diffOutput = '';
             for (var x = 0; x < diffs.length; x++) {
                 var outputString = this.convertDiffableBackToHtml(diffs[x][1]);
                 if (diffs[x][0] === 1) {
                     // This is an add
-                    this.$scope.diffOutput += '<ins>' + outputString + '</ins>';
+                    diffOutput += '<ins>' + outputString + '</ins>';
                 } else if (diffs[x][0] === -1) {
                     // This is a delete
-                    this.$scope.diffOutput += '<del>' + outputString + '</del>';
+                    diffOutput += '<del>' + outputString + '</del>';
                 } else {
-                    this.$scope.diffOutput += outputString;
+                    diffOutput += outputString;
                 }
             }
 
-            this.$scope.diffOutput = this.$sce.trustAsHtml(this.$scope.diffOutput);
+            this.$scope.diffOutput = this.$sce.trustAsHtml(diffOutput);
         };
 
         RichTextDiffController.prototype.convertHtmlToDiffableString = function (htmlString) {
