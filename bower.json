@@ -1,11 +1,11 @@
 {
   "name": "angular-rich-text-diff",
   "main": "angular-rich-text-diff.js",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "authors": [
     "Bill Long <bill@blackout.us>"
   ],
-  "description": "Uses google-diff-match-patch to diff two html strings without messing up the html",
+  "description": "A directive to diff two html strings without messing up the html. Intended for diffing rich text entered into a rich text editor such as textAngular.",
   "keywords": [
     "angular",
     "rich",
