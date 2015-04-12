@@ -29,13 +29,13 @@ Install from bower:
 bower install angular-rich-text-diff
 ```
 
-To use the directive, add it to your app's dependencies:
+Include angular-rich-text-diff.js and google-diff-match-patch.js in your index.html. Add the module to your app's dependencies:
 
 ```
 angular.module('app', ['angular-rich-text-diff']);
 ```
 
-Then put the following HTML somewhere, where left and right are strings containing the before and after HTML
+Put the following HTML somewhere, where left and right are strings containing the before and after HTML
 you want to diff:
 
 ```
