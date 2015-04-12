@@ -9,8 +9,19 @@ typically been entered by a user into a rich text input such as textAngular.
 The idea for this approach came from a [stackoverflow answer](http://stackoverflow.com/questions/2132914/is-there-a-js-diff-library-against-htmlstring-just-like-google-diff-match-patch?rq=1).
 I couldn't find an actual implementation anywhere, so I created one.
 
-Note that you will need to include angular-sanitize.js in your project, as this directive
+## Dependencies
+
+### ngSanitize
+
+You will need to include angular-sanitize.js in your project, as this directive
 depends on ngSanitize in order to display the resulting HTML.
+
+### google-diff-match-patch
+
+This dependency is declared in the bower.json, but you will still need to be sure
+to include the google-diff-match-patch.js file in your project.
+
+## Usage
 
 To use the directive, add it to your app's dependencies:
 
