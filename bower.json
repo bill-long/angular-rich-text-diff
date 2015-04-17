@@ -1,7 +1,7 @@
 {
   "name": "angular-rich-text-diff",
   "main": "angular-rich-text-diff.js",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "authors": [
     "Bill Long <bill@blackout.us>"
   ],
