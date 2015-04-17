@@ -16,6 +16,7 @@ var AngularRichTextDiff;
                 _this.doDiff();
             });
             this.tagMap = {};
+            this.mapLength = 0;
             this.dmp = new diff_match_patch();
             this.doDiff();
         }
@@ -92,9 +93,10 @@ var AngularRichTextDiff;
                     var unicodeCharacter = this.tagMap[tagString];
                     if (unicodeCharacter === undefined) {
                         // Nope, need to map it
-                        unicodeCharacter = String.fromCharCode(this.unicodeRangeStart + this.tagMap.length);
+                        unicodeCharacter = String.fromCharCode(this.unicodeRangeStart + this.mapLength);
                         this.tagMap[tagString] = unicodeCharacter;
                         this.tagMap[unicodeCharacter] = tagString;
+                        this.mapLength++;
                     }
                     // At this point it has been mapped, so now we can use it
                     diffableString += htmlString.substr(offset, tagStart - offset);

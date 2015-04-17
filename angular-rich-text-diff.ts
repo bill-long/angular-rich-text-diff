@@ -21,12 +21,14 @@ module AngularRichTextDiff {
 
         unicodeRangeStart = 0xE000;
         tagMap: any;
+        mapLength: number;
         dmp: diff_match_patch;
 
         constructor(public $scope: IRichTextDiffScope, public $sce: ng.ISCEService) {
             $scope.$watch('left', () => { this.doDiff(); });
             $scope.$watch('right', () => { this.doDiff(); });
             this.tagMap = {};
+            this.mapLength = 0;
             this.dmp = new diff_match_patch();
             this.doDiff();
         }
@@ -110,9 +112,10 @@ module AngularRichTextDiff {
                     var unicodeCharacter = this.tagMap[tagString];
                     if (unicodeCharacter === undefined) {
                         // Nope, need to map it
-                        unicodeCharacter = String.fromCharCode(this.unicodeRangeStart + this.tagMap.length);
+                        unicodeCharacter = String.fromCharCode(this.unicodeRangeStart + this.mapLength);
                         this.tagMap[tagString] = unicodeCharacter;
                         this.tagMap[unicodeCharacter] = tagString;
+                        this.mapLength++;
                     }
 
                     // At this point it has been mapped, so now we can use it
