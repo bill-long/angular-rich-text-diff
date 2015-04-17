@@ -20,13 +20,13 @@ module AngularRichTextDiff {
         static $inject = ['$scope', '$sce'];
 
         unicodeRangeStart = 0xE000;
-        tagMap: Array<ITagMapping>;
+        tagMap: any;
         dmp: diff_match_patch;
 
         constructor(public $scope: IRichTextDiffScope, public $sce: ng.ISCEService) {
             $scope.$watch('left', () => { this.doDiff(); });
             $scope.$watch('right', () => { this.doDiff(); });
-            this.tagMap = [];
+            this.tagMap = {};
             this.dmp = new diff_match_patch();
             this.doDiff();
         }
@@ -107,21 +107,12 @@ module AngularRichTextDiff {
                     var tagString = htmlString.substr(tagStart, tagEnd + 1 - tagStart);
 
                     // Is this tag already mapped?
-                    var unicodeCharacter = '';
-                    for (var x = 0; x < this.tagMap.length; x++) {
-                        if (this.tagMap[x].tag === tagString) {
-                            unicodeCharacter = this.tagMap[x].unicodeReplacement;
-                            break;
-                        }
-                    }
-
-                    if (unicodeCharacter === '') {
+                    var unicodeCharacter = this.tagMap[tagString];
+                    if (unicodeCharacter === undefined) {
                         // Nope, need to map it
                         unicodeCharacter = String.fromCharCode(this.unicodeRangeStart + this.tagMap.length);
-                        this.tagMap.push({
-                            tag: tagString,
-                            unicodeReplacement: unicodeCharacter
-                        });
+                        this.tagMap[tagString] = unicodeCharacter;
+                        this.tagMap[unicodeCharacter] = tagString;
                     }
 
                     // At this point it has been mapped, so now we can use it
@@ -145,14 +136,7 @@ module AngularRichTextDiff {
                     continue;
                 }
 
-                var tagString = '';
-                for (var y = 0; y < this.tagMap.length; y++) {
-                    if (this.tagMap[y].unicodeReplacement === diffableString[x]) {
-                        tagString = this.tagMap[y].tag;
-                        break;
-                    }
-                }
-
+                var tagString = this.tagMap[diffableString[x]];
                 if (tagString === '') {
                     // We somehow have a character that is above our range but didn't map
                     // Do we need to add an upper bound or change the range?

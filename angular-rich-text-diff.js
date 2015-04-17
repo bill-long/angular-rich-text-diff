@@ -1,9 +1,8 @@
-﻿/// <reference path="bower_components/dt-angular/angular.d.ts"/>
+/// <reference path="bower_components/dt-angular/angular.d.ts"/>
 /// <reference path="google-diff-match-patch.d.ts"/>
 var AngularRichTextDiff;
 (function (AngularRichTextDiff) {
     'use strict';
-
     var RichTextDiffController = (function () {
         function RichTextDiffController($scope, $sce) {
             var _this = this;
@@ -16,7 +15,7 @@ var AngularRichTextDiff;
             $scope.$watch('right', function () {
                 _this.doDiff();
             });
-            this.tagMap = [];
+            this.tagMap = {};
             this.dmp = new diff_match_patch();
             this.doDiff();
         }
@@ -30,23 +29,22 @@ var AngularRichTextDiff;
                 diffs[x][1] = this.insertTagsForOperation(diffs[x][1], diffs[x][0]);
                 diffOutput += this.convertDiffableBackToHtml(diffs[x][1]);
             }
-
             this.$scope.diffOutput = this.$sce.trustAsHtml(diffOutput);
         };
-
         RichTextDiffController.prototype.insertTagsForOperation = function (diffableString, operation) {
             var openTag = '';
             var closeTag = '';
             if (operation === 1) {
                 openTag = '<ins>';
                 closeTag = '</ins>';
-            } else if (operation === -1) {
+            }
+            else if (operation === -1) {
                 openTag = '<del>';
                 closeTag = '</del>';
-            } else {
+            }
+            else {
                 return diffableString;
             }
-
             var outputString = openTag;
             var isOpen = true;
             for (var x = 0; x < diffableString.length; x++) {
@@ -56,35 +54,31 @@ var AngularRichTextDiff;
                         outputString += openTag;
                         isOpen = true;
                     }
-
                     outputString += diffableString[x];
-                } else {
+                }
+                else {
                     // We just hit one of our mapped unicode characters. Close our tag.
                     if (isOpen) {
                         outputString += closeTag;
                         isOpen = false;
                     }
-
                     outputString += diffableString[x];
                 }
             }
-
             if (isOpen)
                 outputString += closeTag;
-
             return outputString;
         };
-
         RichTextDiffController.prototype.convertHtmlToDiffableString = function (htmlString) {
             var diffableString = '';
-
             var offset = 0;
             while (offset < htmlString.length) {
                 var tagStart = htmlString.indexOf('<', offset);
                 if (tagStart < 0) {
                     diffableString += htmlString.substr(offset);
                     break;
-                } else {
+                }
+                else {
                     var tagEnd = htmlString.indexOf('>', tagStart);
                     if (tagEnd < 0) {
                         // Invalid HTML
@@ -93,71 +87,46 @@ var AngularRichTextDiff;
                         diffableString += htmlString.substr(offset, tagStart - offset);
                         break;
                     }
-
                     var tagString = htmlString.substr(tagStart, tagEnd + 1 - tagStart);
-
                     // Is this tag already mapped?
-                    var unicodeCharacter = '';
-                    for (var x = 0; x < this.tagMap.length; x++) {
-                        if (this.tagMap[x].tag === tagString) {
-                            unicodeCharacter = this.tagMap[x].unicodeReplacement;
-                            break;
-                        }
-                    }
-
-                    if (unicodeCharacter === '') {
+                    var unicodeCharacter = this.tagMap[tagString];
+                    if (unicodeCharacter === undefined) {
                         // Nope, need to map it
                         unicodeCharacter = String.fromCharCode(this.unicodeRangeStart + this.tagMap.length);
-                        this.tagMap.push({
-                            tag: tagString,
-                            unicodeReplacement: unicodeCharacter
-                        });
+                        this.tagMap[tagString] = unicodeCharacter;
+                        this.tagMap[unicodeCharacter] = tagString;
                     }
-
                     // At this point it has been mapped, so now we can use it
                     diffableString += htmlString.substr(offset, tagStart - offset);
                     diffableString += unicodeCharacter;
-
                     offset = tagEnd + 1;
                 }
             }
-
             return diffableString;
         };
-
         RichTextDiffController.prototype.convertDiffableBackToHtml = function (diffableString) {
             var htmlString = '';
-
             for (var x = 0; x < diffableString.length; x++) {
                 var charCode = diffableString.charCodeAt(x);
                 if (charCode < this.unicodeRangeStart) {
                     htmlString += diffableString[x];
                     continue;
                 }
-
-                var tagString = '';
-                for (var y = 0; y < this.tagMap.length; y++) {
-                    if (this.tagMap[y].unicodeReplacement === diffableString[x]) {
-                        tagString = this.tagMap[y].tag;
-                        break;
-                    }
-                }
-
+                var tagString = this.tagMap[diffableString[x]];
                 if (tagString === '') {
                     // We somehow have a character that is above our range but didn't map
                     // Do we need to add an upper bound or change the range?
                     htmlString += diffableString[x];
-                } else {
+                }
+                else {
                     htmlString += tagString;
                 }
             }
-
             return htmlString;
         };
         RichTextDiffController.$inject = ['$scope', '$sce'];
         return RichTextDiffController;
     })();
-
     function richTextDiff() {
         var directive = {
             restrict: 'E',
@@ -168,11 +137,8 @@ var AngularRichTextDiff;
             template: '<div ng-bind-html="diffOutput"></div>',
             controller: RichTextDiffController
         };
-
         return directive;
     }
-
     angular.module('angular-rich-text-diff', ['ngSanitize']);
-
     angular.module('angular-rich-text-diff').directive('richTextDiff', richTextDiff);
 })(AngularRichTextDiff || (AngularRichTextDiff = {}));
