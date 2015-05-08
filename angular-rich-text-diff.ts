@@ -25,10 +25,17 @@ module AngularRichTextDiff {
         dmp: diff_match_patch;
 
         constructor(public $scope: IRichTextDiffScope, public $sce: ng.ISCEService) {
-            $scope.$watch('left', () => { this.doDiff(); });
-            $scope.$watch('right', () => { this.doDiff(); });
+            $scope.$watch('left',() => { this.doDiff(); });
+            $scope.$watch('right',() => { this.doDiff(); });
             this.tagMap = {};
             this.mapLength = 0;
+            
+            // Go ahead and map nbsp;
+            var unicodeCharacter = String.fromCharCode(this.unicodeRangeStart + this.mapLength);
+            this.tagMap['&nbsp;'] = unicodeCharacter;
+            this.tagMap[unicodeCharacter] = '&nbsp;';
+            this.mapLength++;
+
             this.dmp = new diff_match_patch();
             this.doDiff();
         }
@@ -48,6 +55,17 @@ module AngularRichTextDiff {
         }
 
         insertTagsForOperation(diffableString: string, operation: number): string {
+        
+            // Don't insert anything if these are all tags
+            var n = -1;
+            do {
+                n++;
+            }
+            while (diffableString.charCodeAt(n) >= this.unicodeRangeStart);
+            if (n + 1 >= diffableString.length) {
+                return diffableString;
+            }
+
             var openTag = '';
             var closeTag = '';
             if (operation === 1) {
@@ -88,6 +106,7 @@ module AngularRichTextDiff {
         }
 
         convertHtmlToDiffableString(htmlString: string): string {
+            htmlString = htmlString.replace(/&nbsp;/g, this.tagMap['&nbsp;']);
             var diffableString = '';
 
             var offset = 0;

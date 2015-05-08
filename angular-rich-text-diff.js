@@ -17,6 +17,11 @@ var AngularRichTextDiff;
             });
             this.tagMap = {};
             this.mapLength = 0;
+            // Go ahead and map nbsp;
+            var unicodeCharacter = String.fromCharCode(this.unicodeRangeStart + this.mapLength);
+            this.tagMap['&nbsp;'] = unicodeCharacter;
+            this.tagMap[unicodeCharacter] = '&nbsp;';
+            this.mapLength++;
             this.dmp = new diff_match_patch();
             this.doDiff();
         }
@@ -33,6 +38,14 @@ var AngularRichTextDiff;
             this.$scope.diffOutput = this.$sce.trustAsHtml(diffOutput);
         };
         RichTextDiffController.prototype.insertTagsForOperation = function (diffableString, operation) {
+            // Don't insert anything if these are all tags
+            var n = -1;
+            do {
+                n++;
+            } while (diffableString.charCodeAt(n) >= this.unicodeRangeStart);
+            if (n + 1 >= diffableString.length) {
+                return diffableString;
+            }
             var openTag = '';
             var closeTag = '';
             if (operation === 1) {
@@ -71,6 +84,7 @@ var AngularRichTextDiff;
             return outputString;
         };
         RichTextDiffController.prototype.convertHtmlToDiffableString = function (htmlString) {
+            htmlString = htmlString.replace(/&nbsp;/g, this.tagMap['&nbsp;']);
             var diffableString = '';
             var offset = 0;
             while (offset < htmlString.length) {
