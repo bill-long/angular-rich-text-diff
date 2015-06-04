@@ -61,8 +61,8 @@ module AngularRichTextDiff {
             do {
                 n++;
             }
-            while (diffableString.charCodeAt(n) >= this.unicodeRangeStart);
-            if (n + 1 >= diffableString.length) {
+            while (diffableString.charCodeAt(n) >= this.unicodeRangeStart + 1);
+            if (n >= diffableString.length) {
                 return diffableString;
             }
 
