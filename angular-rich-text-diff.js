@@ -9,12 +9,8 @@ var AngularRichTextDiff;
             this.$scope = $scope;
             this.$sce = $sce;
             this.unicodeRangeStart = 0xE000;
-            $scope.$watch('left', function () {
-                _this.doDiff();
-            });
-            $scope.$watch('right', function () {
-                _this.doDiff();
-            });
+            $scope.$watch('left', function () { _this.doDiff(); });
+            $scope.$watch('right', function () { _this.doDiff(); });
             this.tagMap = {};
             this.mapLength = 0;
             // Go ahead and map nbsp;
@@ -68,6 +64,7 @@ var AngularRichTextDiff;
                         outputString += openTag;
                         isOpen = true;
                     }
+                    // Always add regular characters to the output
                     outputString += diffableString[x];
                 }
                 else {
@@ -76,7 +73,14 @@ var AngularRichTextDiff;
                         outputString += closeTag;
                         isOpen = false;
                     }
-                    outputString += diffableString[x];
+                    // If this is a delete operation, do not add the deleted tags
+                    // to the output
+                    if (operation === -1) {
+                        continue;
+                    }
+                    else {
+                        outputString += diffableString[x];
+                    }
                 }
             }
             if (isOpen)
@@ -156,5 +160,7 @@ var AngularRichTextDiff;
         return directive;
     }
     angular.module('angular-rich-text-diff', ['ngSanitize']);
-    angular.module('angular-rich-text-diff').directive('richTextDiff', richTextDiff);
+    angular
+        .module('angular-rich-text-diff')
+        .directive('richTextDiff', richTextDiff);
 })(AngularRichTextDiff || (AngularRichTextDiff = {}));

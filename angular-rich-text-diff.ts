@@ -87,7 +87,8 @@ module AngularRichTextDiff {
                         outputString += openTag;
                         isOpen = true;
                     }
-
+                    
+                    // Always add regular characters to the output
                     outputString += diffableString[x];
                 } else {
                     // We just hit one of our mapped unicode characters. Close our tag.
@@ -96,7 +97,14 @@ module AngularRichTextDiff {
                         isOpen = false;
                     }
 
-                    outputString += diffableString[x];
+                    // If this is a delete operation, do not add the deleted tags
+                    // to the output
+                    if (operation === -1) {
+                      continue;
+                    }
+                    else {
+                      outputString += diffableString[x];
+                    }
                 }
             }
 
