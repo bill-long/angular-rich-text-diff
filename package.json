@@ -1,0 +1,31 @@
+{
+  "name": "angular-rich-text-diff",
+  "main": "angular-rich-text-diff.js",
+  "version": "0.2.3",
+  "authors": [
+    "Bill Long <bill@blackout.us>"
+  ],
+  "description": "A directive to diff two html strings without messing up the html. Intended for diffing rich text entered into a rich text editor such as textAngular.",
+  "keywords": [
+    "angular",
+    "rich",
+    "text",
+    "html",
+    "diff"
+  ],
+  "license": "MIT",
+  "homepage": "http://github.com/bill-long/angular-rich-text-diff",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "dt-angular": "~1.2.16"
+  },
+  "dependencies": {
+    "diff-match-patch": "1.0.0"
+  }
+}
